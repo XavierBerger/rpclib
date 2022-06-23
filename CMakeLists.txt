@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
-project(rpc VERSION 2.3.0)
+project(rpc VERSION 2.3.1)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -90,7 +90,7 @@ set(DEP_SOURCES
   ${RPCLIB_DEPENDENCIES}/src/format.cc
   ${RPCLIB_DEPENDENCIES}/src/posix.cc)
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   lib/rpc/dispatcher.cc
   lib/rpc/server.cc
   lib/rpc/client.cc
@@ -104,7 +104,8 @@ add_library(${PROJECT_NAME}
   lib/rpc/nonstd/optional.cc
   ${DEP_SOURCES}
   ${DEP_HEADERS}
-  ${RPCLIB_HEADERS})
+  ${RPCLIB_HEADERS}
+  )
 
 # Perform steps and checks required for MSVC support
 rpclib_msvc_support()

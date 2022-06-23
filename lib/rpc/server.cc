@@ -55,7 +55,9 @@ struct server::impl {
     void start_accept() {
         acceptor_.async_accept(socket_, [this](std::error_code ec) {
             if (!ec) {
+#ifdef RPCLIB_ENABLE_LOGGING
                 auto ep = socket_.remote_endpoint();
+#endif
                 LOG_INFO("Accepted connection from {}:{}", ep.address(),
                          ep.port());
                 auto s = std::make_shared<server_session>(

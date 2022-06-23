@@ -1,6 +1,8 @@
 
 function(rpclib_msvc_support)
   if(MSVC)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
     # When building via conan, respect the compilation settings.
     if ("${CONAN_LINK_RUNTIME}" STREQUAL "/MT")
       set(RPCLIB_MSVC_STATIC_RUNTIME ON)

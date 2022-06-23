@@ -4,15 +4,17 @@
 #define SERVER_H_S0HB5KXY
 
 #include "rpc/config.h"
-#include "rpc/msgpack.hpp"
 #include "rpc/dispatcher.h"
+#include "rpc/msgpack.hpp"
 
 #include "rpc/detail/pimpl.h"
+
+#include "rpc_export.h"
 
 namespace rpc {
 
 namespace detail {
-class server_session;
+class RPC_EXPORT server_session;
 }
 
 //! \brief Implements a msgpack-rpc server. This is the main interfacing
@@ -37,7 +39,7 @@ public:
     //! move assignment operator.
     //!
     //! \param other The other instance to move from.
-    server(server&& other) noexcept;
+    server(server &&other) noexcept;
 
     //! \brief Constructs a server that listens on the specified address on
     //! the specified port.
@@ -56,7 +58,7 @@ public:
     //!
     //! \param other The other instance to move from.
     //! \return The result of the assignment.
-    server& operator=(server&& other);
+    server &operator=(server &&other);
 
     //! \brief Starts the server loop. This is a blocking call.
     //!
@@ -95,22 +97,19 @@ public:
 
     //! \brief Unbinds a functor binded to a name.
     //!
-    //! This function removes already binded function from RPC Ccallable functions
+    //! This function removes already binded function from RPC Ccallable
+    //! functions
     //!
     //! \param name The name of the functor.
-    void unbind(std::string const &name) {
-        disp_->unbind(name);
-    }
-	
-	//! \brief Returns all binded names
+    void unbind(std::string const &name) { disp_->unbind(name); }
+
+    //! \brief Returns all binded names
     //!
     //! This function returns a list of all names which functors are binded to
     //!
     //! \param name The name of the functor.
-    std::vector<std::string> names() const {
-        return disp_->names();
-    }
-	
+    std::vector<std::string> names() const { return disp_->names(); }
+
     //! \brief Sets the exception behavior in handlers. By default,
     //! handlers throwing will crash the server. If suppressing is on,
     //! the server will try to gather textual data and return it to
@@ -130,13 +129,13 @@ public:
     void close_sessions();
 
     //! \brief Closes a specific session.
-    void close_session(std::shared_ptr<detail::server_session> const& s);
+    void close_session(std::shared_ptr<detail::server_session> const &s);
 
 private:
-	RPCLIB_DECLARE_PIMPL()
+    RPCLIB_DECLARE_PIMPL()
     std::shared_ptr<detail::dispatcher> disp_;
 };
 
-} /* rpc */
+} // namespace rpc
 
 #endif /* end of include guard: SERVER_H_S0HB5KXY */

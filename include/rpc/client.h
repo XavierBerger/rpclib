@@ -10,6 +10,8 @@
 #include "rpc/detail/pimpl.h"
 #include "rpc/msgpack.hpp"
 
+#include "rpc_export.h"
+
 namespace rpc {
 
 //! \brief Implements a client that connects to a msgpack-rpc server and is
@@ -20,7 +22,7 @@ namespace rpc {
 //! functions. This class supports calling functions synchronously and
 //! asynchronously. When the client object is created, it initiates connecting
 //! to the given server asynchronically and disconnects when it is destroyed.
-class client {
+class RPC_EXPORT client {
 public:
     //! \brief Constructs a client.
     //!
@@ -53,12 +55,13 @@ public:
     //! \tparam Args The types of the arguments. Each type in this parameter
     //! pack have to be serializable by msgpack.
     //!
-    //! \returns A RPCLIB_MSGPACK::object containing the result of the function (if
-    //! any). To obtain a typed value, use the msgpack API.
+    //! \returns A RPCLIB_MSGPACK::object containing the result of the function
+    //! (if any). To obtain a typed value, use the msgpack API.
     //!
     //! \throws rpc::rpc_error if the server responds with an error.
     template <typename... Args>
-    RPCLIB_MSGPACK::object_handle call(std::string const &func_name, Args... args);
+    RPCLIB_MSGPACK::object_handle call(std::string const &func_name,
+                                       Args... args);
 
     //! \brief Calls a function asynchronously with the given name and
     //! arguments.
@@ -77,8 +80,8 @@ public:
     //! \returns A std::future, possibly holding a future result
     //! (which is a RPCLIB_MSGPACK::object).
     template <typename... Args>
-    std::future<RPCLIB_MSGPACK::object_handle> async_call(std::string const &func_name,
-                                                   Args... args);
+    std::future<RPCLIB_MSGPACK::object_handle>
+    async_call(std::string const &func_name, Args... args);
 
     //! \brief Sends a notification with the given name and arguments (if any).
     //!
@@ -132,16 +135,15 @@ private:
 
     void wait_conn();
     void post(std::shared_ptr<RPCLIB_MSGPACK::sbuffer> buffer, int idx,
-              std::string const& func_name,
-              std::shared_ptr<rsp_promise> p);
+              std::string const &func_name, std::shared_ptr<rsp_promise> p);
     void post(RPCLIB_MSGPACK::sbuffer *buffer);
     int get_next_call_idx();
-    RPCLIB_NORETURN void throw_timeout(std::string const& func_name);
+    RPCLIB_NORETURN void throw_timeout(std::string const &func_name);
 
 private:
     static constexpr double buffer_grow_factor = 1.8;
     RPCLIB_DECLARE_PIMPL()
 };
-}
+} // namespace rpc
 
 #include "rpc/client.inl"

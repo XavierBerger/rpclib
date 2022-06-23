@@ -15,9 +15,10 @@
 #include "rpc/detail/func_tools.h"
 #include "rpc/detail/func_traits.h"
 #include "rpc/detail/log.h"
+#include "rpc/detail/make_unique.h"
 #include "rpc/detail/not.h"
 #include "rpc/detail/response.h"
-#include "rpc/detail/make_unique.h"
+#include "rpc_export.h"
 
 namespace rpc {
 
@@ -25,7 +26,7 @@ namespace detail {
 
 //! \brief This class maintains a registry of functors associated with their
 //! names, and callable using a msgpack-rpc call pack.
-class dispatcher {
+class RPC_EXPORT dispatcher {
 public:
     //! \brief Binds a functor to a name so it becomes callable via RPC.
     //! \param name The name of the functor.
@@ -61,18 +62,16 @@ public:
               detail::tags::nonzero_arg const &);
 
     //! \brief Unbind a functor with a given name from callable functors.
-	void unbind(std::string const &name) {
-		funcs_.erase(name);
-	}
-	
-	//! \brief returns a list of all names which functors are binded to
-	std::vector<std::string> names() const {
-		std::vector<std::string> names;
-		for(auto it = funcs_.begin(); it != funcs_.end(); ++it)
-			names.push_back(it->first);
-		return names;
-	}
-	
+    void unbind(std::string const &name) { funcs_.erase(name); }
+
+    //! \brief returns a list of all names which functors are binded to
+    std::vector<std::string> names() const {
+        std::vector<std::string> names;
+        for (auto it = funcs_.begin(); it != funcs_.end(); ++it)
+            names.push_back(it->first);
+        return names;
+    }
+
     //! @}
 
     //! \brief Processes a message that contains a call according to
@@ -96,14 +95,17 @@ public:
 
     //! \brief This functor type unifies the interfaces of functions that are
     //!        called remotely
-    using adaptor_type = std::function<std::unique_ptr<RPCLIB_MSGPACK::object_handle>(
-        RPCLIB_MSGPACK::object const &)>;
+    using adaptor_type =
+        std::function<std::unique_ptr<RPCLIB_MSGPACK::object_handle>(
+            RPCLIB_MSGPACK::object const &)>;
 
     //! \brief This is the type of messages as per the msgpack-rpc spec.
-    using call_t = std::tuple<int8_t, uint32_t, std::string, RPCLIB_MSGPACK::object>;
+    using call_t =
+        std::tuple<int8_t, uint32_t, std::string, RPCLIB_MSGPACK::object>;
 
     //! \brief This is the type of notification messages.
-    using notification_t = std::tuple<int8_t, std::string, RPCLIB_MSGPACK::object>;
+    using notification_t =
+        std::tuple<int8_t, std::string, RPCLIB_MSGPACK::object>;
 
 private:
     //! \brief Checks the argument count and throws an exception if
@@ -129,8 +131,8 @@ private:
     std::unordered_map<std::string, adaptor_type> funcs_;
     RPCLIB_CREATE_LOG_CHANNEL(dispatcher)
 };
-}
-}
+} // namespace detail
+} // namespace rpc
 
 #include "dispatcher.inl"
 
